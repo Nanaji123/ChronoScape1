@@ -38,6 +38,20 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/plant_wallpaper" />
         </service>
+
+        <service
+            android:name=".wallpaper.LifeWallpaperService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="Daily Journey Wallpaper"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/life_wallpaper" />
+        </service>
         
     </application>
 

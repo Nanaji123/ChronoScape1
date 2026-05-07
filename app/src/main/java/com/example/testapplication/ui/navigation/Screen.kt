@@ -15,4 +15,6 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector?
     object Dashboard : Screen("dashboard", "Dashboard", Icons.Default.Dashboard)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
     object Profile : Screen("profile", "Profile", Icons.Default.AccountCircle)
+    object Preview : Screen("preview", "Preview", null)
+    object LifePreview : Screen("life_preview", "Life Preview", null)
 }

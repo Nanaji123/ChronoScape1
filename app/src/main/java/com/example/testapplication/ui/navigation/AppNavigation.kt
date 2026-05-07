@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.testapplication.SessionManager
 import com.example.testapplication.ui.components.BottomNavigationBar
 import com.example.testapplication.ui.screens.*
+import com.example.testapplication.ui.screens.LifePreviewPage
 
 @Composable
 fun AppNavigation() {
@@ -24,61 +25,75 @@ fun AppNavigation() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Define which screens should show the bottom bar
-    val showBottomBar = currentRoute in listOf(
-        Screen.Home.route,
-        Screen.Dashboard.route,
-        Screen.Settings.route,
-        Screen.Profile.route
-    )
+    val showBottomBar =
+            currentRoute in
+                    listOf(
+                            Screen.Home.route,
+                            Screen.Dashboard.route,
+                            Screen.Settings.route,
+                            Screen.Profile.route
+                    )
 
     Scaffold(
-        bottomBar = {
-            if (showBottomBar) {
-                BottomNavigationBar(navController)
+            bottomBar = {
+                if (showBottomBar) {
+                    BottomNavigationBar(navController)
+                }
             }
-        }
     ) { innerPadding ->
         NavHost(
-            navController = navController,
-            startDestination = Screen.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+                navController = navController,
+                startDestination = Screen.Splash.route,
+                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             composable(Screen.Splash.route) {
-                SplashScreen(onTimeout = {
-                    if (sessionManager.isLoggedIn()) {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
+                SplashScreen(
+                        onTimeout = {
+                            if (sessionManager.isLoggedIn()) {
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.Splash.route) { inclusive = true }
+                                }
+                            } else {
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(Screen.Splash.route) { inclusive = true }
+                                }
+                            }
                         }
-                    } else {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
-                        }
-                    }
-                })
+                )
             }
             composable(Screen.Login.route) {
-                LoginScreen(onContinue = { phoneNumber ->
-                    navController.navigate(Screen.OTP.route)
-                })
+                LoginScreen(
+                        onContinue = { phoneNumber -> navController.navigate(Screen.OTP.route) }
+                )
             }
             composable(Screen.OTP.route) {
-                OTPScreen(onVerify = {
-                    sessionManager.setLoggedIn(true)
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                })
+                OTPScreen(
+                        onVerify = {
+                            sessionManager.setLoggedIn(true)
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
+                        }
+                )
             }
-            composable(Screen.Home.route) { HomePage() }
+            composable(Screen.Home.route) { HomePage(navController) }
             composable(Screen.Dashboard.route) { DashboardPage() }
             composable(Screen.Settings.route) { SettingsPage() }
             composable(Screen.Profile.route) {
-                ProfilePage(onLogout = {
-                    sessionManager.setLoggedIn(false)
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                })
+                ProfilePage(
+                        onLogout = {
+                            sessionManager.setLoggedIn(false)
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                )
+            }
+            composable(Screen.Preview.route) {
+                PreviewPage(onBack = { navController.popBackStack() })
+            }
+            composable(Screen.LifePreview.route) {
+                LifePreviewPage(onBack = { navController.popBackStack() })
             }
         }
     }
